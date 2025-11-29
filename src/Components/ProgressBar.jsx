@@ -16,7 +16,7 @@ const ProgressBar = ({ progress }) => (
           className="bg-gradient-to-r from-rose-300 to-rose-500 h-3 rounded-full transition-all duration-1000 ease-out flex items-center justify-end relative"
           style={{ width: `${progress}%` }}
         >
-          {/* Fixed the URL syntax here */}
+          
           <div className="absolute inset-0 w-full h-full bg-[url('[https://www.transparenttextures.com/patterns/diagmonds-light.png](https://www.transparenttextures.com/patterns/diagmonds-light.png)')] opacity-30"></div>
           <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent"></div>
         </div>
