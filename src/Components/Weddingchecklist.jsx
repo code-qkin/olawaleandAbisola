@@ -99,8 +99,8 @@ const Weddingchecklist = () => {
   };
 
 
- 
-  
+
+
 
   const handleDateChange = (e) => {
     setWeddingDate(e.target.value);
@@ -121,6 +121,15 @@ const Weddingchecklist = () => {
     saveToCloud({ categories: newCats });
   };
 
+  const updateCategoryDetails = (catId, field, value) => {
+    const newCats = categories.map(cat => {
+      if (cat.id !== catId) return cat;
+      return { ...cat, [field]: value };
+    });
+    setCategories(newCats);
+    saveToCloud({ categories: newCats });
+  };
+
   const deleteTask = (catId, taskId) => {
     const newCats = categories.map(cat => {
       if (cat.id !== catId) return cat;
@@ -136,8 +145,28 @@ const Weddingchecklist = () => {
   const addTask = (catId, text) => {
     const newCats = categories.map(cat => {
       if (cat.id !== catId) return cat;
-      const newItem = { id: Date.now(), text, completed: false };
+      const newItem = {
+        id: Date.now(),
+        text,
+        completed: false,
+        vendor: '',
+        paid: false
+      };
       return { ...cat, items: [...cat.items, newItem] };
+    });
+    setCategories(newCats);
+    saveToCloud({ categories: newCats });
+  };
+
+  const updateTask = (catId, taskId, field, value) => {
+    const newCats = categories.map(cat => {
+      if (cat.id !== catId) return cat;
+      return {
+        ...cat,
+        items: cat.items.map(item =>
+          item.id === taskId ? { ...item, [field]: value } : item
+        )
+      };
     });
     setCategories(newCats);
     saveToCloud({ categories: newCats });
@@ -274,7 +303,9 @@ const Weddingchecklist = () => {
               onToggleTask={toggleTask}
               onDeleteTask={deleteTask}
               onAddTask={addTask}
-              onDeleteCategory={requestDeleteCategory} // <--- Updated function here
+              onDeleteCategory={requestDeleteCategory}
+              onUpdateTask={updateTask}
+              onUpdateCategory={updateCategoryDetails}
             />
           ))}
         </div>

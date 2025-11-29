@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Check, Diamond, ChevronDown, ChevronUp, Trash2, Plus } from 'lucide-react';
+import { Check, Diamond, ChevronDown, ChevronUp, Trash2, Plus, Store, DollarSign } from 'lucide-react';
 import TaskItem from './TaskItem';
 
-const CategorySection = ({ category, onToggleTask, onDeleteTask, onAddTask, onDeleteCategory }) => {
+const CategorySection = ({ category, onToggleTask, onDeleteTask, onAddTask, onDeleteCategory, onUpdateCategory }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [newItemText, setNewItemText] = useState('');
   
@@ -58,9 +58,45 @@ const CategorySection = ({ category, onToggleTask, onDeleteTask, onAddTask, onDe
         </div>
       </div>
 
-      {/* Task List */}
+      {/* Expandable Content */}
       <div className={`transition-all duration-500 ease-in-out ${isOpen ? 'max-h-[1200px] opacity-100' : 'max-h-0 opacity-0'}`}>
-        <ul className="px-5 pb-5 space-y-2">
+        
+        {/* NEW: Vendor & Payment Details Section */}
+        <div className="px-5 pb-4 flex flex-col md:flex-row gap-3">
+            {/* Vendor Input */}
+            <div className="flex-grow flex items-center gap-2 bg-stone-50 px-3 py-2 rounded-xl border border-stone-100 focus-within:border-rose-200 focus-within:bg-white transition-all">
+                <Store size={14} className="text-stone-400" />
+                <input 
+                    type="text" 
+                    placeholder="Vendor Name (e.g. Flora & Co.)"
+                    className="bg-transparent border-none text-sm w-full outline-none text-stone-600 placeholder-stone-400"
+                    value={category.vendor || ''}
+                    onChange={(e) => onUpdateCategory(category.id, 'vendor', e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                />
+            </div>
+
+            {/* Paid Toggle */}
+            <button
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onUpdateCategory(category.id, 'paid', !category.paid);
+                }}
+                className={`
+                    flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all
+                    ${category.paid 
+                        ? 'bg-green-100 text-green-700 border-green-200 shadow-sm' 
+                        : 'bg-white text-stone-400 border-stone-200 hover:border-rose-300 hover:text-rose-500'
+                    }
+                `}
+            >
+                <DollarSign size={14} />
+                {category.paid ? 'Paid in Full' : 'Mark Paid'}
+            </button>
+        </div>
+
+        {/* Task List */}
+        <ul className="px-5 pb-5 space-y-2 border-t border-stone-50 pt-4">
           {items.map((item) => (
             <TaskItem 
               key={item.id}
@@ -71,7 +107,7 @@ const CategorySection = ({ category, onToggleTask, onDeleteTask, onAddTask, onDe
           ))}
 
           {/* Add New Item Input */}
-          <li className="mt-3 pt-3 border-t border-stone-50">
+          <li className="mt-3 pt-3">
             <form onSubmit={handleAdd} className="flex gap-2 group">
               <input
                 type="text"

@@ -2,7 +2,7 @@ import React from 'react';
 import { Sparkles } from 'lucide-react';
 
 const ProgressBar = ({ progress }) => (
-  <div className="sticky top-0 -30 bg-white/95 backdrop-blur-md border-b border-rose-100 px-4 py-3 shadow-sm transition-all duration-300">
+  <div className="relative  bg-white/95 backdrop-blur-md border-b border-rose-100 px-4 py-3 shadow-sm transition-all duration-300">
     <div className="max-w-3xl mx-auto">
       <div className="flex justify-between text-sm font-medium text-stone-600 mb-1">
         <span className="flex items-center gap-2 font-serif italic text-rose-600">
