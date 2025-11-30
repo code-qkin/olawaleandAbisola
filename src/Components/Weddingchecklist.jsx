@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Calendar, Plus, Edit2 } from 'lucide-react';
-// IMPORT from your new file
+import { Link } from 'react-router-dom'; 
+import { Heart, Calendar, Plus, Edit2, Mail } from 'lucide-react'; 
 import { signInAnonymously, onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../firebaseConfig';
@@ -10,9 +10,6 @@ import Countdown from './Countdown';
 import ProgressBar from './ProgressBar';
 import CategorySection from './CategorySection';
 import ConfirmModal from './ConfirmModal';
-
-
-
 
 const INITIAL_DATA = [
   {
@@ -39,13 +36,12 @@ const Weddingchecklist = () => {
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
-  const [deleteModal, setDeleteModal] = useState({ issOpen: false, categoryId: null, });
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, categoryId: null });
 
   const PLANNER_DOC_ID = 'my-wedding-planner';
 
   // --- Auth & Data Sync ---
   useEffect(() => {
-    // Simple Anonymous Sign In
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       if (!currentUser) {
@@ -60,7 +56,6 @@ const Weddingchecklist = () => {
   useEffect(() => {
     if (!user) return;
 
-    // Use a simpler path: collection "planners", document "my-wedding-planner"
     const docRef = doc(db, 'planners', PLANNER_DOC_ID);
 
     const unsubscribeSnapshot = onSnapshot(docRef, (snapshot) => {
@@ -71,7 +66,6 @@ const Weddingchecklist = () => {
         if (data.weddingDate) setWeddingDate(data.weddingDate);
         if (data.coupleName) setCoupleName(data.coupleName);
       } else {
-        // Initialize if document doesn't exist
         const initialData = {
           categories: INITIAL_DATA,
           weddingDate: weddingDate,
@@ -97,10 +91,6 @@ const Weddingchecklist = () => {
       lastUpdated: new Date().toISOString()
     }, { merge: true });
   };
-
-
-
-
 
   const handleDateChange = (e) => {
     setWeddingDate(e.target.value);
@@ -220,16 +210,12 @@ const Weddingchecklist = () => {
 
       {/* Hero Section */}
       <div className="relative w-full h-[500px] overflow-hidden">
-        {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105"
           style={{ backgroundImage: `url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=2000')` }}
         ></div>
-
-        {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-stone-900/40 via-rose-900/20 to-[#FDFCFB]"></div>
 
-        {/* Content */}
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 pt-10">
 
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/80 backdrop-blur-md border border-rose-200 shadow-lg text-rose-600 text-xs font-bold uppercase tracking-widest mb-6">
@@ -274,7 +260,7 @@ const Weddingchecklist = () => {
 
       <main className="max-w-3xl mx-auto px-4 py-12 -mt-10 relative z-20">
 
-        {/* Dashboard Header */}
+        {/* Dashboard Header - UPDATED */}
         <div className="flex justify-between items-end mb-8 px-2 pb-4">
           <div className="bg-white/80 backdrop-blur px-6 py-4 rounded-2xl shadow-sm border border-rose-50 w-full flex justify-between items-center">
             <div>
@@ -287,9 +273,32 @@ const Weddingchecklist = () => {
                 <p className="text-stone-400 text-xs font-bold uppercase tracking-widest">Synced with Partner</p>
               </div>
             </div>
-            <div className="text-right">
-              <span className="text-3xl font-serif text-rose-500">{totalTasks - completedTasks}</span>
-              <span className="block text-[10px] uppercase tracking-widest text-stone-400 font-bold">Tasks Left</span>
+
+            {/* Right Side: Generate Button + Stats */}
+            <div className="flex items-center gap-4">
+              {/* Desktop Button - PASS STATE HERE */}
+              <Link
+                to="/generate-invite"
+                state={{ weddingDate }} // <--- Passing the date here
+                className="hidden md:flex items-center gap-2 bg-stone-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition-colors shadow-sm"
+              >
+                <Mail size={16} />
+                <span>Create Invites</span>
+              </Link>
+
+              {/* Mobile Button - PASS STATE HERE */}
+              <Link
+                to="/generate-invite"
+                state={{ weddingDate }} // <--- Passing the date here
+                className="md:hidden flex items-center justify-center bg-stone-800 text-white p-2 rounded-lg hover:bg-rose-600 transition-colors shadow-sm"
+              >
+                <Mail size={16} />
+              </Link>
+
+              <div className="text-right border-l border-stone-200 pl-4 ml-2">
+                <span className="text-3xl font-serif text-rose-500">{totalTasks - completedTasks}</span>
+                <span className="block text-[10px] uppercase tracking-widest text-stone-400 font-bold">Tasks Left</span>
+              </div>
             </div>
           </div>
         </div>
